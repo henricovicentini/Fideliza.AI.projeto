@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- Define o conjunto de caracteres e torna a página responsiva -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Título da aba do navegador -->
+  <title>Fideliza.AI - Login</title>
+  
+  <!-- Importa a fonte 'Poppins' do Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Início do estilo CSS embutido -->
+  <style>
+    /* Define cores globais como variáveis CSS */
+    :root {
+      --primary: #0d6efd;
+      --black: #000;
+      --white: #fff;
+      --gray-light: #f5f5f5;
+      --gray-dark: #333;
+    }
+
+    /* Reset básico e box-sizing padrão */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Estilização geral do corpo da página */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--gray-light);
+      color: var(--gray-dark);
+      padding-top: 80px;
+    }
+
+    /* Cabeçalho fixo no topo com fundo preto e sombra */
+    header {
+      background-color: var(--black);
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Estilização da marca "Fideliza.AI" no topo */
+    .brand {
+      color: var(--white);
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Container central do conteúdo */
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: calc(100vh - 80px);
+      padding: 40px 20px;
+    }
+
+    /* Caixa do formulário com fundo preto e cantos arredondados */
+    .form-box {
+      background-color: var(--black);
+      padding: 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      color: var(--white);
+    }
+
+    /* Estilo dos rótulos dos campos do formulário */
+    .form-box label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    /* Estilo dos campos de entrada: texto, e-mail e senha */
+    .form-box input[type="text"],
+    .form-box input[type="email"],
+    .form-box input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+      background-color: #333;
+      color: var(--white);
+    }
+
+    /* Estilo dos campos em foco */
+    .form-box input:focus {
+      outline: 2px solid var(--primary);
+      background-color: #222;
+      color: var(--white);
+    }
+
+    /* Estilo da checkbox "Lembrar-me" */
+    .form-box input[type="checkbox"] {
+      margin-right: 6px;
+      transform: scale(1.2);
+    }
+
+    /* Estilo do botão de envio do formulário */
+    .form-box .button {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    /* Efeito hover do botão */
+    .form-box .button:hover {
+      background-color: #0b5ed7;
+    }
+
+    /* Estilização do parágrafo inferior (registro) */
+    .form-box p {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* Estilo dos links dentro da caixa do formulário */
+    .form-box a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    /* Efeito hover para links */
+    .form-box a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Cabeçalho fixo com a marca do sistema -->
+  <header>
+    <div class="brand">Fideliza.AI - Login</div>
+  </header>
+
+  <!-- Container central com a caixa de formulário -->
+  <div class="container">
+    <div class="form-box">
+      <form method="POST">
+        <!-- Campo oculto CSRF para segurança (Flask-WTF) -->
+        {{ form.hidden_tag() }}
+
+        <!-- Campo de e-mail -->
+        <label for="{{ form.email.id }}">E-mail:</label>
+        {{ form.email(class_="input") }}
+
+        <!-- Campo de senha -->
+        <label for="{{ form.password.id }}">Senha:</label>
+        {{ form.password(class_="input") }}
+
+        <!-- Checkbox "Lembrar-me" com label ao lado -->
+        <label style="display: flex; align-items: center;">
+          {{ form.remember_me() }} Lembrar-me
+        </label>
+
+        <!-- Botão de envio do formulário -->
+        {{ form.submit(class_="button") }}
+
+        <!-- Link para a página de registro -->
+        <p>Não tem uma conta? <a href="{{ url_for('register') }}">Registre-se</a></p>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
