@@ -1,14 +1,13 @@
 ###### Importações principais do Flask e extensões ######
 
-from flask import Flask, render_template, request, redirect, url_for, flash  # Flask básico, templates, redirecionamentos e mensagens de erro
-from flask_sqlalchemy import SQLAlchemy  # ORM para manipulação do banco de dados
-from flask_migrate import Migrate  # Gerencia migrações do banco (estrutura e versões)
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user  # Gerencia sessões de login e autenticação
-from werkzeug.security import generate_password_hash, check_password_hash  # Criptografa senhas com hash seguro
-from flask_wtf import FlaskForm  # Integração de formulários HTML com Flask de forma segura
-from wtforms import StringField, PasswordField, BooleanField, SubmitField  # Campos que serão usados nos formulários
-from wtforms.validators import DataRequired, Email, EqualTo, Length  # Validações dos campos dos formulários
-import email_validator  # Adicionada para suportar validação de e-mail
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import DataRequired, Email, EqualTo, Length
 import secrets, time, os
 
 ###### Configurações da aplicação ######
@@ -18,7 +17,6 @@ app.config['SECRET_KEY'] = secrets.token_hex(32)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.instance_path, 'users.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Garantir que a pasta instance exista e o banco de dados também
 os.makedirs(app.instance_path, exist_ok=True)
 if not os.path.exists(os.path.join(app.instance_path, 'users.db')):
     open(os.path.join(app.instance_path, 'users.db'), 'w').close()
@@ -41,8 +39,10 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     failed_attempts = db.Column(db.Integer, default=0)
-    locked_until = db.Column(db.Integer, default=None)
+    locked_until = db.Column(db.Integer, default=None, nullable=True)
     last_login = db.Column(db.Integer, default=None)
+
+###### Carregamento do usuário logado ######
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -65,7 +65,16 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirmar Senha', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Registrar')
 
-###### Rota principal (home) - renderiza a página inicial ######
+###### Formulário de perfil do usuário ######
+
+class ProfileForm(FlaskForm):
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+    current_password = PasswordField('Senha Atual', validators=[DataRequired()])
+    new_password = PasswordField('Nova Senha', validators=[Length(min=6)])
+    confirm_new_password = PasswordField('Confirmar Nova Senha', validators=[EqualTo('new_password', message='As senhas não coincidem.')])
+    submit = SubmitField('Salvar Alterações')
+
+###### Rota principal - página inicial ######
 
 @app.route('/')
 def home():
@@ -78,13 +87,11 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-
         if not user:
             flash('Credenciais inválidas', 'danger')
             return render_template('login.html', form=form)
 
         current_time = int(time.time())
-
         if user.locked_until and user.locked_until > current_time:
             flash(f'Conta bloqueada. Tente novamente em {user.locked_until - current_time} segundos.', 'danger')
             return render_template('login.html', form=form)
@@ -107,7 +114,7 @@ def login():
 
     return render_template('login.html', form=form)
 
-###### Rota de registro de usuário ######
+###### Rota de registro ######
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -127,7 +134,7 @@ def register():
 
     return render_template('register.html', form=form)
 
-###### Rota protegida - painel do usuário logado ######
+###### Rota protegida - dashboard ######
 
 @app.route('/dashboard')
 @login_required
@@ -141,6 +148,38 @@ def dashboard():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+###### Rota de perfil - permite editar email e senha ######
+
+@app.route('/perfil', methods=['GET', 'POST'])
+@login_required
+def perfil():
+    form = ProfileForm()
+
+    if request.method == 'GET':
+        form.email.data = current_user.email
+
+    if form.validate_on_submit():
+        if not check_password_hash(current_user.password, form.current_password.data):
+            flash('Senha atual incorreta.', 'danger')
+            return render_template('perfil.html', form=form)
+
+        if form.email.data != current_user.email:
+            if User.query.filter_by(email=form.email.data).first():
+                flash('Este e-mail já está em uso.', 'danger')
+                return render_template('perfil.html', form=form)
+            current_user.email = form.email.data
+
+        if form.new_password.data:
+            current_user.password = generate_password_hash(form.new_password.data)
+
+        db.session.commit()
+        flash('Perfil atualizado com sucesso.', 'success')
+        return redirect(url_for('perfil'))
+
+    return render_template('perfil.html', form=form)
+
+###### Inicializa a aplicação ######
 
 if __name__ == '__main__':
     app.run(debug=True)

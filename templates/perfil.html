@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fideliza.AI - Perfil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --black: #000;
+      --white: #fff;
+      --gray-light: #f5f5f5;
+      --gray-dark: #333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--gray-light);
+      color: var(--gray-dark);
+      padding-top: 80px;
+    }
+
+    header {
+      background-color: var(--black);
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .brand {
+      color: var(--white);
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 40px 20px;
+      background-color: var(--black); /* Fundo preto */
+      color: var(--white); /* Texto branco */
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .container h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    form label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: 600;
+    }
+
+    form input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      background-color: #222; /* Fundo escuro para inputs */
+      color: var(--white);     /* Texto branco */
+    }
+
+    form button,
+    input[type="submit"] {
+      background-color: var(--primary); /* Azul */
+      color: var(--white);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    form button:hover,
+    input[type="submit"]:hover {
+      background-color: #0b5ed7;
+    }
+
+    .flash-message {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #f8d7da;
+      color: #842029;
+      border: 1px solid #f5c2c7;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">Fideliza.AI</div>
+  </header>
+
+  <div class="container">
+    <h1>Editar Perfil</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      {{ form.hidden_tag() }}
+
+      <label for="email">Novo E-mail</label>
+      {{ form.email(id="email") }}
+
+      <label for="current_password">Senha Atual</label>
+      {{ form.current_password(id="current_password") }}
+
+      <label for="new_password">Nova Senha</label>
+      {{ form.new_password(id="new_password") }}
+
+      <label for="confirm_new_password">Confirmar Nova Senha</label>
+      {{ form.confirm_new_password(id="confirm_new_password") }}
+
+      {{ form.submit() }}
+    </form>
+  </div>
+
+</body>
+</html>
