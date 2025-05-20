@@ -1,118 +1,109 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <!-- Configurações básicas de codificação e título -->
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-
-  <!-- Importa a fonte Poppins do Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- Estilos CSS embutidos -->
+  <meta charset="UTF-8" />
+  <title>Dashboard - Fideliza.AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    /* Variáveis de cor */
     :root {
       --primary: #0d6efd;
+      --success: #198754;
       --black: #000;
       --white: #fff;
       --gray-light: #f5f5f5;
       --gray-dark: #333;
     }
-
-    /* Reset básico */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
-    /* Estilo do corpo da página */
-    body {
+    body, html {
+      height: 100%;
       font-family: 'Poppins', sans-serif;
-      background-color: var(--gray-light);
-      color: var(--gray-dark);
-      padding-top: 80px; /* Espaço para o cabeçalho fixo */
+      background: var(--gray-light);
     }
-
-    /* Estilo do cabeçalho fixo */
-    header {
-      background-color: var(--black);
-      padding: 20px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    nav.sidebar {
       position: fixed;
+      left: 0;
       top: 0;
-      width: 100%;
-      z-index: 10;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
-
-    /* Estilo do nome da marca no cabeçalho */
-    .brand {
+      height: 100%;
+      width: 220px;
+      background: var(--black);
+      padding: 20px;
       color: var(--white);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+    }
+    nav.sidebar .brand {
       font-size: 24px;
       font-weight: 600;
+      margin-bottom: 30px;
+      text-align: center;
       letter-spacing: 0.5px;
     }
-
-    /* Container central do dashboard */
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 40px 20px;
-      background-color: var(--white);
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    /* Estilo do título principal */
-    .container h1 {
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
-
-    /* Estilo dos parágrafos */
-    .container p {
-      margin: 12px 0;
-      font-size: 16px;
-    }
-
-    /* Estilo do botão de logout */
-    .container a {
-      display: inline-block;
-      background-color: var(--primary);
+    nav.sidebar a {
       color: var(--white);
-      padding: 10px 20px;
-      border-radius: 6px;
       text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 6px;
       font-weight: 600;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s;
     }
-
-    /* Efeito hover no botão */
-    .container a:hover {
-      background-color: #0b5ed7;
+    nav.sidebar a:hover {
+      background-color: var(--primary);
+    }
+    main.content {
+      margin-left: 240px;
+      padding: 40px 30px;
+    }
+    main.content h1 {
+      margin-bottom: 20px;
+      color: var(--gray-dark);
+    }
+    main.content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: var(--gray-dark);
+    }
+    button.view-button {
+      background-color: var(--success);
+      color: var(--white);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    button.view-button:hover {
+      background-color: #157347;
+    }
+    img#graph {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
-  <!-- Cabeçalho com o nome do dashboard -->
-  <header>
-    <div class="brand">Dashboard - Fideliza.AI</div>
-  </header>
+  <nav class="sidebar">
+    <div class="brand">Fideliza.AI</div>
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('perfil') }}">Perfil</a>
+    <a href="{{ url_for('logout') }}">Sair</a>
+  </nav>
 
-  <!-- Conteúdo principal da página -->
-  <div class="container">
-    <!-- Mensagem de boas-vindas ao usuário -->
+  <main class="content">
     <h1>Olá, {{ user.name }}!</h1>
 
-    <!-- Exibe a data/hora do último login -->
-    <p>Último login: {{ user.last_login }}</p>
-
-    <!-- Link para logout -->
-    <p><a href="{{ url_for('logout') }}">Sair</a></p>
-  </div>
+    <a href="{{ url_for('view') }}">
+      <button type="button" class="view-button">Visualizar gráficos</button>
+    </a>
+  </main>
 </body>
 </html>

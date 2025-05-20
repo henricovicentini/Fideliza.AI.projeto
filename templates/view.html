@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fideliza.AI - Visualização de Dados</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --black: #000;
+      --white: #fff;
+      --gray-light: #f5f5f5;
+      --gray-dark: #333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--gray-light);
+      color: var(--white);
+      padding-top: 80px;
+    }
+
+    header {
+      background-color: var(--black);
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .brand {
+      color: var(--white);
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 40px 20px;
+      background-color: var(--black);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .container h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--white);
+    }
+
+    .form-upload {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .form-upload input[type="file"] {
+      margin-bottom: 10px;
+    }
+
+    .form-upload button {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .form-upload button:hover {
+      background-color: #0b5ed7;
+    }
+
+    .chart-container {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .chart-container p {
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+
+    .chart-container img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 30px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .btn-voltar {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: var(--primary);
+      color: var(--white);
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-voltar:hover {
+      background-color: #0b5ed7;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Fideliza.AI</div>
+  </header>
+
+  <div class="container">
+    <h1>Visualização de Churn</h1>
+
+    <form class="form-upload" method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" accept=".csv" required />
+      <br />
+      <button type="submit">Enviar e Visualizar</button>
+    </form>
+
+    {% if plots %}
+    <div class="chart-container">
+      <p>Abaixo está a visualização dos dados carregados:</p>
+      {% for plot in plots %}
+        {# Remove 'static/' do caminho, se existir, para url_for funcionar corretamente #}
+        {% set path = plot %}
+        {% if path.startswith('static/') %}
+          {% set path = path[7:] %}
+        {% endif %}
+        <img src="{{ url_for('static', filename=path) }}" alt="Gráfico" />
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="text-align:center;">
+      <a href="{{ url_for('dashboard') }}" class="btn-voltar">Voltar ao Dashboard</a>
+    </div>
+  </div>
+</body>
+</html>
